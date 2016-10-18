@@ -1,6 +1,5 @@
 <?php namespace DanielFarina\Instagram\Components;
 use DanielFarina\Instagram\Models\InstagramSettings;
-session_start();
 use Cms\Classes\ComponentBase;
 use Instaphp;
 use \Cache;
@@ -11,6 +10,8 @@ class Slider extends ComponentBase
 {
     use \danielfarina\Instagram\Classes\MakeKeyTrait;
     public $media;
+    public $errorOccurred;
+
 
 
     public function componentDetails()
@@ -38,7 +39,7 @@ class Slider extends ComponentBase
             'user_id' => [
                 'title'             => 'User Id',
                 'description'       => 'Restrict returned media by the specified user.',
-                'default'           =>  $settings->userid,
+                'default'           =>  $settings->userid, //4003175709
                 'type'              => 'string',
                 'validationPattern' => '^(?=\s*\S).*$',
                 'validationMessage' => 'The User Name property is required'
@@ -82,12 +83,41 @@ class Slider extends ComponentBase
     public function photos()
     {
 
+        $this->postPage = $this->page['postPage'] = $this->property('postPage');
+
+
         // Pulls and parses data.
         $result = $this->fetchData("https://api.instagram.com/v1/users/".$this->property('user_id')."/media/recent/?access_token=".$this->property('access_token')."");
         $result = json_decode($result);
 
+        print_r($result);
+
+        //Check no errors were returned or empty object
+        if(!empty($result->meta->error_type) || empty($result)){
+            $this->errorOccurred = true;
+            return false;
+        }
+
+        $this->media = $result->data;
         return $result->data;
-       // print_r($result);
+
+    }
+
+
+    public function preCheck()
+    {
+        //Make sure userid and toekn are present
+        if(empty($this->property('user_id')) || empty($this->property('access_token')))
+        {
+            $this->errorOccurred = true;
+        }
+        //Check for other errors
+        if($this->errorOccurred == true)
+        {
+           return  true;
+        }else {
+            return false;
+        }
     }
 
 
@@ -95,23 +125,23 @@ class Slider extends ComponentBase
     public function onRun()
     {
 
-        //add required js & css
-        $this->addJs('/plugins/danielfarina/instagram/assets/js/swiper.min.js');
-        $this->addCss('/plugins/danielfarina/instagram/assets/css/swiper.min.css');
+            //add required js & css
+            $this->addJs('/plugins/danielfarina/instagram/assets/js/swiper.min.js');
+            $this->addCss('/plugins/danielfarina/instagram/assets/css/swiper.min.css');
 
 
+            $key = $this->makeKey();
 
-        $key = $this->makeKey();
+            if ($this->errorOccurred == false && Cache::has($key))
+            {
+                $this->media = $this->page['media'] = Cache::get($key);
 
-        if (Cache::has($key))
-        {
-            $this->media = $this->page['media'] = Cache::get($key);
+            }
+            else {
+                $expires_at = Carbon::now()->addMinutes($this->property('cache'));
+                Cache::put($key, $this->photos(), $expires_at);
+            }
 
-        }
-        else {
-            $expires_at = Carbon::now()->addMinutes($this->property('cache'));
-            Cache::put($key, $this->photos(), $expires_at);
-        }
 
 
 

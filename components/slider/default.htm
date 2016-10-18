@@ -119,7 +119,18 @@
             </div>
         </div>
         {% endfor %}
+
+
+        {% if __SELF__.preCheck() == true %}
+        <div style="background-color:#ffd6cb; padding: 10px; font-size:11px;">
+            <b>Error loading plugin. </b> <br>
+            Please check your Token and userID</div>
+        {% endif %}
+
 </div>
+
+
+
 
 
     {% put scripts %}
