@@ -1,1 +1,1 @@
-# octovercms_instagram_swiper
+### Instragram Swiper for October CMS

@@ -1,0 +1,152 @@
+<!--Gzip Compress Enabled -->
+
+<!-- Demo styles -->
+<style>
+    body {
+        background: #eee;
+        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        color:#000;
+        margin: 0;
+        padding: 0;
+    }
+    .swiper-container {
+        width: 100%;
+        height: 300px;
+        margin: 20px auto;
+    }
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+        width: 60%;
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    .swiper-slide:nth-child(2n) {
+        width: 40%;
+    }
+    .swiper-slide:nth-child(3n) {
+        width: 20%;
+    }
+
+    .tagcontainer {
+        position:absolute;
+        align-self: flex-end;
+    }
+    .linkcontainer {
+        align-self: flex-start;
+        margin-left: auto;
+    }
+    .linkcontainer a {
+        margin: 4px;
+        color: white;
+        display: block;
+        background-color: rgba(0,0,0,0.30);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 13px;
+        padding: 2px;
+        -webkit-transition: all 0.7s ease-in-out;
+        -o-transition: all 0.7s ease-in-out;
+        transition: all 0.7s ease-in-out
+    }
+
+    .linkcontainer a:hover {
+
+        background-color: rgba(0,0,0,0.80);
+
+    }
+
+    .tag {
+        display: inline-block;
+        height: 15px;
+        position: relative;
+        content: "";
+        cursor: pointer;
+        margin: 0 3px 0 0;
+        padding: 3px 5px 5px 5px;
+        border: 0 solid rgba(0,0,0,0);
+        -webkit-border-radius: 2px 1px 1px 4px;
+        border-radius: 6px 1px 1px 6px;
+        font: normal normal normal 10px/11px Helvetica, sans-serif;
+        color: rgba(255,255,255,1);
+        text-align: center;
+        text-transform: uppercase;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        background: #008bdb;
+        -webkit-box-shadow: 0 1px 0 0 #074e77 , 1px 1px 0 0 #074e77;
+        box-shadow: 0 1px 0 0 #074e77 , 1px 1px 0 0 #074e77;
+        -webkit-transition: all 0.4s ease-in-out;
+        -o-transition: all 0.4s ease-in-out;
+        transition: all 0.4s ease-in-out
+
+    }
+    .tag:hover {
+        border-radius: 2px 1px 1px 2px;
+        background: #033450;
+    }
+    .tag a {
+        color:white;
+    }
+
+
+</style>
+
+
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        {% for photos in __SELF__.media %}
+        <div class="swiper-slide" style="background-image:url({{ photos.images.standard_resolution.url }});background-size:cover;">
+            <div class="linkcontainer"> <a href="{{ photos.link  }}"><i class="icon-link"></i></a> </div>
+            <div class="tagcontainer">
+                {% for tags in photos.tags %}
+                <div class="tag">  <a href="https://www.instagram.com/explore/tags/{{ tags  }}/" target="_blank">{{ tags  }}</a> </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+
+    {% put scripts %}
+    <script>
+        var swiper = new Swiper('.swiper-container', {
+            slidesPerView: 3,
+            centeredSlides: false,
+            paginationClickable: false,
+            spaceBetween: 10,
+            grabCursor: true,
+            breakpoints: {
+                // when window width is <= 320px
+                480: {
+                    slidesPerView: 1,
+                    spaceBetween: 10
+                },
+                // when window width is <= 480px
+                640: {
+                    slidesPerView: 2,
+                    spaceBetween: 10
+                },
+                // when window width is <= 640px
+                1000: {
+                    slidesPerView: 2,
+                    spaceBetween: 10
+                }
+            }
+        });
+    </script>
+    {% endput %}

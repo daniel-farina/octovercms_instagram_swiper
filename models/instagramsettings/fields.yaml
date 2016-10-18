@@ -1,0 +1,17 @@
+
+fields:
+  enable:
+    label: Enable Instagram Slider
+    type: switch
+    comment: Flick this switch to enable the slider
+  accessToken:
+    label: Access Token
+    comment: Use the following URL to obtain your user id. https://www.instagram.com/oauth/authorize/?client_id=CLIENTID&redirect_uri=REDIRECT_URL&response_type=token&scope=public_content (CLIENTID & REDIRECT URL are obtained by creating a developer account, then a client). Go to .instagram.com/developer/ to create  a dev account.
+  userid:
+    label: User ID
+    comment: Use the following URL to obtain your user id. https://api.instagram.com/v1/users/search?q=[USERNAME]&access_token=[ACCESS TOKEN] (you will first need the token from above)
+
+  cache_minutes:
+    span: left
+    label: Cache duration, in minutes.
+    default: 10
